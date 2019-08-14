@@ -1,0 +1,10 @@
+{
+	"autodeskProduct":	"Fusion360",
+	"type":	"script",
+	"author":	"Jan Mrázek",
+	"description":	{
+		"":	"Simple plugin to generate sketches for spur and helical gears. The specialty is that this plugin is not a single shot generator, but the parameters of the gears can be adjusted later in the design."
+	},
+	"supportedOS":	"windows|mac",
+	"editEnabled":	true
+}
