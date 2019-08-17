@@ -160,19 +160,22 @@ def drawStock(sketch, compOrigin, teethCount, module, pressureAngle):
     origin = sketch.project(compOrigin).item(0)
     
     pitchCircle, pitchCircleD = newCircleD(sketch, origin, 1)
+    pitchCircleD.parameter.name = "pitchCircle_" + pitchCircleD.parameter.name
     pitchCircle.isConstruction = True
-    adendum, adendumD = newCircleD(sketch, origin, 1.5)
+    addendum, addendumD = newCircleD(sketch, origin, 1.5)
+    addendumD.parameter.name = "addendum_" + addendumD.parameter.name
     dedendum, dedendumD = newCircleD(sketch, origin, 0.5)
+    dedendumD.parameter.name = "dedendum_" + dedendumD.parameter.name
     dedendum.isConstruction = True
     baseCircle, baseCircleD = newCircleD(sketch, origin, 0.8)
     baseCircle.isConstruction = True
     
     pitchCircleD.parameter.expression = "{} * {} / 1mm".format(teethCount, module)
-    adendumD.parameter.expression = "{p} + 2 * {m}".format(p=pitchCircleD.parameter.name, m=module)
+    addendumD.parameter.expression = "{p} + 2 * {m}".format(p=pitchCircleD.parameter.name, m=module)
     dedendumD.parameter.expression = "{p} - 2 * 1.25 * {m}".format(p=pitchCircleD.parameter.name, m=module)
     baseCircleD.parameter.expression = "{p} * cos({a})".format(p=pitchCircleD.parameter.name, a=pressureAngle)
     
-    return pitchCircleD, adendum, adendumD, dedendumD, baseCircleD
+    return pitchCircleD, addendum, addendumD, dedendumD, baseCircleD
     
 def drawTrochoidal(origin, teethCount, module, pressureAngle, offset, segments):
     # formula taken from https://engineering.stackexchange.com/questions/13852/involute-gear-curve-when-root-diameter-falls-below-base-diameter/13868
@@ -218,7 +221,7 @@ def drawInvolute(origin, teethCount, module, pressureAngle, pitchDia, baseDia, a
 def drawTooth(sketch, origin, teethCount, module, pressureAngle, offset):
     print("offset: " + str(offset))
     stockOrigin = sketch.project(origin).item(0)
-    pitchDia, adendumCirc, adendum, dedendum, baseDia = drawStock(
+    pitchDia, addendumCirc, addendum, dedendum, baseDia = drawStock(
         sketch,
         origin,
         teethCount,
@@ -231,7 +234,7 @@ def drawTooth(sketch, origin, teethCount, module, pressureAngle, offset):
         pressureAngle,
         pitchDia.parameter.name,
         baseDia.parameter.name,
-        adendum.parameter.name,
+        addendum.parameter.name,
         offset,
         10)
     trachoidal = drawTrochoidal(
@@ -254,7 +257,6 @@ def drawTooth(sketch, origin, teethCount, module, pressureAngle, offset):
             horizontalLine,
             mirrorLine,
             newPoint(3, 2, 0))
-        print(offset)
         dim.parameter.expression = offset
     mirrorLine.isConstruction = True
     involute2 = mirrorSpline(mirrorLine, involute)
@@ -268,13 +270,13 @@ def drawTooth(sketch, origin, teethCount, module, pressureAngle, offset):
         
     pitchAngle = "(1 / {teethCount} * 1 deg * 360 mm / 2)".format(teethCount=teethCount)
     fenceA = newLine(sketch, stockOrigin, newPoint(1, 1, 0))
-    fenceAD = sketch.sketchDimensions.addAngularDimension(fenceA, mirrorLine, newPoint (1, 0.5, 0))
+    fenceAD = sketch.sketchDimensions.addAngularDimension(fenceA, mirrorLine, newPoint (1, 0.85, 0))
     fenceAD.parameter.expression = pitchAngle
-    makeCoincident(fenceA.endSketchPoint, adendumCirc)
+    makeCoincident(fenceA.endSketchPoint, addendumCirc)
     fenceB = newLine(sketch, stockOrigin, newPoint(1, -1, 0))
-    fenceBD = sketch.sketchDimensions.addAngularDimension(fenceB, mirrorLine, newPoint (1, -0.5, 0))
+    fenceBD = sketch.sketchDimensions.addAngularDimension(fenceB, mirrorLine, newPoint (1, -0.85, 0))
     fenceBD.parameter.expression = fenceAD.parameter.name
-    makeCoincident(fenceB.endSketchPoint, adendumCirc)
+    makeCoincident(fenceB.endSketchPoint, addendumCirc)
 
 def run(context):
     ui = None
